@@ -10,10 +10,10 @@ class opts(object):
   def __init__(self):
     self.parser = argparse.ArgumentParser()
     # basic experiment setting
-    self.parser.add_argument('task', default='ctdet',
-                             help='ctdet | ddd | multi_pose | exdet')
-    self.parser.add_argument('--dataset', default='coco',
-                             help='coco | kitti | coco_hp | pascal')
+    self.parser.add_argument('task', default='fewdet',
+                             help='ctdet | ddd | multi_pose | exdet | fewdet')
+    self.parser.add_argument('--dataset', default='fewcoco',
+                             help='coco | kitti | coco_hp | pascal | fewcoco')
     self.parser.add_argument('--exp_id', default='default')
     self.parser.add_argument('--test', action='store_true')
     self.parser.add_argument('--debug', type=int, default=0,
@@ -318,6 +318,13 @@ class opts(object):
                    'wh': 2 if not opt.cat_spec_wh else 2 * opt.num_classes}
       if opt.reg_offset:
         opt.heads.update({'reg': 2})
+    elif opt.task == 'fewdet':
+      # assert opt.dataset in ['pascal', 'coco']
+      opt.heads = {'ss': opt.num_classes,
+                   'hm': 1,
+                   'wh': 2 if not opt.cat_spec_wh else 2 * opt.num_classes}
+      if opt.reg_offset:
+        opt.heads.update({'reg': 2})
     elif opt.task == 'multi_pose':
       # assert opt.dataset in ['coco_hp']
       opt.flip_idx = dataset.flip_idx
@@ -336,6 +343,9 @@ class opts(object):
   def init(self, args=''):
     default_dataset_info = {
       'ctdet': {'default_resolution': [512, 512], 'num_classes': 80, 
+                'mean': [0.408, 0.447, 0.470], 'std': [0.289, 0.274, 0.278],
+                'dataset': 'coco'},
+      'fewdet': {'default_resolution': [512, 512], 'num_classes': 80, 
                 'mean': [0.408, 0.447, 0.470], 'std': [0.289, 0.274, 0.278],
                 'dataset': 'coco'},
       'exdet': {'default_resolution': [512, 512], 'num_classes': 80, 
