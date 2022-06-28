@@ -5,7 +5,7 @@ from __future__ import print_function
 from .sample.ddd import DddDataset
 from .sample.exdet import EXDetDataset
 from .sample.ctdet import CTDetDataset
-from .sample.fewdet import CTDetDataset
+from .sample.fewdet import FewDetDataset
 from .sample.multi_pose import MultiPoseDataset
 
 from .dataset.coco import COCO
@@ -14,19 +14,18 @@ from .dataset.pascal import PascalVOC
 from .dataset.kitti import KITTI
 from .dataset.coco_hp import COCOHP
 
-#TODO revisar fewcoco.py
 dataset_factory = {
   'coco': COCO,
-  'fewcoco' : COCO,
+  'fewcoco' : COCO, #<-- No Changes needed
   'pascal': PascalVOC,
   'kitti': KITTI,
   'coco_hp': COCOHP
 }
-#TODO revisar ctdetdataset
+
 _sample_factory = {
   'exdet': EXDetDataset,
   'ctdet': CTDetDataset,
-  'fewdet' : CTDetDataset,
+  'fewdet' : FewDetDataset, #<-- this
   'ddd': DddDataset,
   'multi_pose': MultiPoseDataset
 }

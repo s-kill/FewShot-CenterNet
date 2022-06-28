@@ -152,7 +152,7 @@ class opts(object):
     self.parser.add_argument('--mse_loss', action='store_true',
                              help='use mse loss or focal loss to train '
                                   'keypoint heatmaps.')
-    # ctdet
+    # ctdet + fewnet
     self.parser.add_argument('--reg_loss', default='l1',
                              help='regression loss: sl1 | l1 | l2')
     self.parser.add_argument('--hm_weight', type=float, default=1,
@@ -176,7 +176,7 @@ class opts(object):
     self.parser.add_argument('--peak_thresh', type=float, default=0.2)
     
     # task
-    # ctdet
+    # ctdet + fewnet
     self.parser.add_argument('--norm_wh', action='store_true',
                              help='L1(\hat(y) / y, 1) or L1(\hat(y), y)')
     self.parser.add_argument('--dense_wh', action='store_true',

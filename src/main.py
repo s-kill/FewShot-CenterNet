@@ -20,7 +20,8 @@ from torchsummary import summary
 def main(opt):
   torch.manual_seed(opt.seed)
   torch.backends.cudnn.benchmark = not opt.not_cuda_benchmark and not opt.test
-  Dataset = get_dataset(opt.dataset, opt.task)
+  Dataset = get_dataset(opt.dataset, opt.task) #opt.dataset = 'coco', opt.task = 'ctdet' or 'fewdet'
+  #Dataset := {fewcoco, fewdet}
   opt = opts().update_dataset_info_and_set_heads(opt, Dataset)
   print(opt)
 
@@ -31,17 +32,6 @@ def main(opt):
   
   print('Creating model...')
   model = create_model(opt.arch, opt.heads, opt.head_conv)
-
-  ### BORRAR
-  #test_data = torch.rand((10,3,512,512))
-  #test_output=model(test_data)[0]
-  #print(test_output['hm'].size())
-  #print(test_output['wh'].size())
-  #print(test_output['reg'].size())
-  ### BORRAR
-
-  #for parameter in model.parameters():
-  #  print(parameter.size())
 
   optimizer = torch.optim.Adam(model.parameters(), opt.lr)
   start_epoch = 0

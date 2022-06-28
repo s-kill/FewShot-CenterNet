@@ -14,8 +14,7 @@ from utils.image import gaussian_radius, draw_umich_gaussian, draw_msra_gaussian
 from utils.image import draw_dense_reg
 import math
 
-#TODO Modificar para crear dataset con {ss hm wh reg}
-class CTDetDataset(data.Dataset):
+class FewDetDataset(data.Dataset):
   def _coco_box_to_bbox(self, box):
     bbox = np.array([box[0], box[1], box[0] + box[2], box[1] + box[3]],
                     dtype=np.float32)
@@ -33,7 +32,7 @@ class CTDetDataset(data.Dataset):
     img_path = os.path.join(self.img_dir, file_name)
     ann_ids = self.coco.getAnnIds(imgIds=[img_id])
     anns = self.coco.loadAnns(ids=ann_ids)
-    num_objs = min(len(anns), self.max_objs)
+    num_objs = min(len(anns), self.max_objs) #self.max_objs = 128
 
     img = cv2.imread(img_path)
 
@@ -83,11 +82,12 @@ class CTDetDataset(data.Dataset):
     output_w = input_w // self.opt.down_ratio
     num_classes = self.num_classes
     trans_output = get_affine_transform(c, s, 0, [output_w, output_h])
-
-    hm = np.zeros((num_classes, output_h, output_w), dtype=np.float32)
-    wh = np.zeros((self.max_objs, 2), dtype=np.float32)
+    
+    ss = np.zeros((num_classes, output_h, output_w), dtype=np.float32) #'ss' = [80 x 128 x 128]
+    hm = np.zeros((output_h, output_w), dtype=np.float32) #'hm_og' = [c x 128 x 128]
+    wh = np.zeros((self.max_objs, 2), dtype=np.float32) #'wm' = [128 x 2]
     dense_wh = np.zeros((2, output_h, output_w), dtype=np.float32)
-    reg = np.zeros((self.max_objs, 2), dtype=np.float32)
+    reg = np.zeros((self.max_objs, 2), dtype=np.float32) #'reg' = [128 x 2]
     ind = np.zeros((self.max_objs), dtype=np.int64)
     reg_mask = np.zeros((self.max_objs), dtype=np.uint8)
     cat_spec_wh = np.zeros((self.max_objs, num_classes * 2), dtype=np.float32)
@@ -97,10 +97,10 @@ class CTDetDataset(data.Dataset):
                     draw_umich_gaussian
 
     gt_det = []
-    for k in range(num_objs):
+    for k in range(num_objs): #k in range(128)
       ann = anns[k]
       bbox = self._coco_box_to_bbox(ann['bbox'])
-      cls_id = int(self.cat_ids[ann['category_id']])
+      cls_id = int(self.cat_ids[ann['category_id']]) #cls_id values from 0 to 80
       if flipped:
         bbox[[0, 2]] = width - bbox[[2, 0]] - 1
       bbox[:2] = affine_transform(bbox[:2], trans_output)
@@ -109,13 +109,14 @@ class CTDetDataset(data.Dataset):
       bbox[[1, 3]] = np.clip(bbox[[1, 3]], 0, output_h - 1)
       h, w = bbox[3] - bbox[1], bbox[2] - bbox[0]
       if h > 0 and w > 0:
-        radius = gaussian_radius((math.ceil(h), math.ceil(w)))
-        radius = max(0, int(radius))
+        radius = gaussian_radius((math.ceil(h), math.ceil(w))) 
+        radius = max(0, int(radius)) #set radius for heatmap
         radius = self.opt.hm_gauss if self.opt.mse_loss else radius
         ct = np.array(
           [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=np.float32)
         ct_int = ct.astype(np.int32)
-        draw_gaussian(hm[cls_id], ct_int, radius)
+        draw_gaussian(hm, ct_int, radius) #draw_gaussian(hm[cls_id], ct_int, radius)
+        ss[cls_id,math.ceil(h),math.ceil(w)] = 1 #TODO Check <--------------------------
         wh[k] = 1. * w, 1. * h
         ind[k] = ct_int[1] * output_w + ct_int[0]
         reg[k] = ct - ct_int
@@ -127,7 +128,7 @@ class CTDetDataset(data.Dataset):
         gt_det.append([ct[0] - w / 2, ct[1] - h / 2, 
                        ct[0] + w / 2, ct[1] + h / 2, 1, cls_id])
     
-    ret = {'input': inp, 'hm': hm, 'reg_mask': reg_mask, 'ind': ind, 'wh': wh}
+    ret = {'input': inp, 'ss':ss, 'hm': hm, 'reg_mask': reg_mask, 'ind': ind, 'wh': wh}
     if self.opt.dense_wh:
       hm_a = hm.max(axis=0, keepdims=True)
       dense_wh_mask = np.concatenate([hm_a, hm_a], axis=0)

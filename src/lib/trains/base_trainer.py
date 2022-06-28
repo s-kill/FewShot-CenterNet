@@ -45,7 +45,7 @@ class BaseTrainer(object):
     model_with_loss = self.model_with_loss
     if phase == 'train':
       model_with_loss.train()
-    else:
+    else: #val Check this part
       if len(self.opt.gpus) > 1:
         model_with_loss = self.model_with_loss.module
       model_with_loss.eval()

@@ -48,6 +48,4 @@ root_dir='C:\\Users\\avata\\CenterNet\\src\\lib\\..\\..', rot_weight=1, rotate=0
 save_dir='C:\\Users\\avata\\CenterNet\\src\\lib\\..\\..\\exp\\ctdet\\coco_dla', 
 scale=0.4, scores_thresh=0.1, seed=317, shift=0.1, std=array([[[0.2886383 , 0.27408165, 0.27809834]]], dtype=float32), 
 
-task='ctdet', t
-
-est=False, test_scales=[1.0], trainval=False, val_intervals=5, vis_thresh=0.3, wh_weight=0.1)
+task='ctdet', test=False, test_scales=[1.0], trainval=False, val_intervals=5, vis_thresh=0.3, wh_weight=0.1)
