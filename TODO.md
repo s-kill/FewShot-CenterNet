@@ -9,9 +9,9 @@ TODO file :)
 - - [X] Modify dataset settings for new heads
 
 - [ ] Modify /datasets to new heads
--- [ ] Modify /datasets/dataset_factory.py to add new datasets
--- [ ] Add and modify /datasets/dataset/fewcoco.py to new model
--- [ ] Add and modify /datasets/sample/fewdet.py to new model
+- - [ ] Modify /datasets/dataset_factory.py to add new datasets
+- - [ ] Add and modify /datasets/dataset/fewcoco.py to new model
+- - [ ] Add and modify /datasets/sample/fewdet.py to new model
 
 - [ ] Modify /models/networks/pose_dla_dcn.py last layer to add the new parameter ss
 - [ ] Modify models/decode.py to adapt new model, create losses, etc
