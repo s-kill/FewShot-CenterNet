@@ -14,7 +14,6 @@ from models.data_parallel import DataParallel
 from logger import Logger
 from datasets.dataset_factory import get_dataset
 from trains.train_factory import train_factory
-from torchsummary import summary
 
 
 def main(opt):
