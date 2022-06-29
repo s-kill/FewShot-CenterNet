@@ -22,6 +22,10 @@ TODO list of steps that should be needed to the model to work correctly.
 - - [X] trains/base_trains.py not necesary to modify, but check it anyways
 - - [X] trains/train_factory.py add the new fewdet.py file to the factory list
 
+- [ ] buscar forma de que loss_ss no influya cuando no hay objeto
+- [ ] Coco-Minitrain
+- [ ] Buscar focalloss funcionamiento
+
 
 X = Done
 P = Partially Done / Need to be checked

@@ -486,6 +486,8 @@ class DLASeg(nn.Module):
                     padding=final_kernel // 2, bias=True))
               if 'hm' in head:
                 fc[-1].bias.data.fill_(-2.19)
+              elif 'ss' in head:
+                pass
               else:
                 fill_fc_weights(fc)
             
@@ -514,7 +516,7 @@ class DLASeg(nn.Module):
 
         z = {}
         for head in self.heads:
-            if 'hm' in head:
+            if 'ss' in head:
                 F = self.__getattr__(head)(y[-1])
                 z[head] = self.cosclassifier(F)
             else:

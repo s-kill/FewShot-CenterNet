@@ -1,4 +1,5 @@
 python main.py ctdet --exp_id coco_dla --batch_size 4 --lr 1.25e-4  --gpus 0 --num_workers 0
+python main.py fewdet --exp_id coco_dla --batch_size 4 --lr 1.25e-4  --gpus 0 --num_workers 0
 
 
 Namespace(K=100,

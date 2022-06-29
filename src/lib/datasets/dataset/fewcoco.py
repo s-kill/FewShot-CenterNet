@@ -10,8 +10,7 @@ import os
 
 import torch.utils.data as data
 
-
-#TODO Modificar para crear dataset con {ss hm wh reg}#
+#TODO change with COCOminitrain ?
 class COCO(data.Dataset):
   num_classes = 80
   default_resolution = [512, 512]

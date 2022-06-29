@@ -48,7 +48,7 @@ class FewdetLoss(torch.nn.Module):
           batch['ind'].detach().cpu().numpy(), 
           output['reg'].shape[3], output['reg'].shape[2])).to(opt.device)
       #TODO Check this part and add ss calculation
-      ss_loss += self.crit_ss(output['ss'], torch.argmax(batch['ss'], dim=1)) #TODO CHECK THIS LOSS
+      ss_loss += self.crit_ss(output['ss'], torch.argmax(batch['ss'], dim=1)) #TODO CHECK THIS LOSS (cambiar)
       hm_loss += self.crit(output['hm'], batch['hm']) / opt.num_stacks #check hm_loss, from hm=[batch x c x 128 x 128] to hm=[batcho x 128 x 128] (Should work)
       if opt.wh_weight > 0: #wh_weight = 0.1 so this is True
         if opt.dense_wh: #False in our case
@@ -70,8 +70,7 @@ class FewdetLoss(torch.nn.Module):
         off_loss += self.crit_reg(output['reg'], batch['reg_mask'],
                              batch['ind'], batch['reg']) / opt.num_stacks
     #Added ss to losses        
-    loss =ss_loss + opt.hm_weight * hm_loss + opt.wh_weight * wh_loss + \ 
-           opt.off_weight * off_loss
+    loss =ss_loss + opt.hm_weight * hm_loss + opt.wh_weight * wh_loss + opt.off_weight * off_loss
     loss_stats = {'loss': loss, 'ss_loss':ss_loss, 'hm_loss': hm_loss,
                   'wh_loss': wh_loss, 'off_loss': off_loss}
     return loss, loss_stats
