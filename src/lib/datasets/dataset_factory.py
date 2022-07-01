@@ -26,6 +26,7 @@ _sample_factory = {
   'exdet': EXDetDataset,
   'ctdet': CTDetDataset,
   'fewdet' : FewDetDataset, #<-- this
+  'fewdetv2' : CTDetDataset,
   'ddd': DddDataset,
   'multi_pose': MultiPoseDataset
 }

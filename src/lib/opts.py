@@ -11,7 +11,7 @@ class opts(object):
     self.parser = argparse.ArgumentParser()
     # basic experiment setting
     self.parser.add_argument('task', default='fewdet',
-                             help='ctdet | ddd | multi_pose | exdet | fewdet')
+                             help='ctdet | ddd | multi_pose | exdet | fewdet | fewdetv2')
     self.parser.add_argument('--dataset', default='fewcoco',
                              help='coco | kitti | coco_hp | pascal | fewcoco')
     self.parser.add_argument('--exp_id', default='default')
