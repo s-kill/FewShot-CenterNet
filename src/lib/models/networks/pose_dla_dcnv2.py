@@ -484,11 +484,11 @@ class DLASeg(nn.Module):
                     nn.Conv2d(channels[self.first_level], head_conv,
                         kernel_size=3, padding=1, bias=True),
                     nn.ReLU(inplace=True))
-                    """
+                    '''
                     ,nn.Conv2d(head_conv, classes, 
                         kernel_size=final_kernel, stride=1, 
                         padding=final_kernel // 2, bias=True))
-                    """
+                    '''
               else:
                 fc = nn.Sequential(
                     nn.Conv2d(channels[self.first_level], head_conv,
