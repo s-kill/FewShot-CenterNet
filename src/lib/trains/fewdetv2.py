@@ -82,7 +82,7 @@ class FewdetTrainer(BaseTrainer):
     super(FewdetTrainer, self).__init__(opt, model, optimizer=optimizer)
   
   def _get_losses(self, opt):
-    loss_states = ['loss', 'ss_loss', 'hm_loss', 'wh_loss', 'off_loss'] #add ss_loss
+    loss_states = ['loss', 'hm_loss', 'wh_loss', 'off_loss']
     loss = FewdetLoss(opt)
     return loss_states, loss
 
