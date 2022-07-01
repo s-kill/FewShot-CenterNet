@@ -9,14 +9,12 @@ from .sample.fewdet import FewDetDataset
 from .sample.multi_pose import MultiPoseDataset
 
 from .dataset.coco import COCO
-from .dataset.fewcoco import COCO
 from .dataset.pascal import PascalVOC
 from .dataset.kitti import KITTI
 from .dataset.coco_hp import COCOHP
 
 dataset_factory = {
   'coco': COCO,
-  'fewcoco' : COCO, #<-- No Changes needed
   'pascal': PascalVOC,
   'kitti': KITTI,
   'coco_hp': COCOHP
