@@ -5,7 +5,7 @@ en DGX
 python main.py fewdet --exp_id coco_dla --batch_size 32 --lr 1.25e-4  --gpus 0 --num_workers 3
 
 para fewdetv2:
-python main.py fewdetv2 --exp_id coco_dlav2 --batch_size 128 --lr 5e-4 --num_workers 3
+python main.py fewdetv2 --exp_id coco_dlav2 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav2_34
 
 
 Namespace(K=100,
