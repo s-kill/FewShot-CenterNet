@@ -4,6 +4,7 @@ from __future__ import print_function
 
 from .ctdet import CtdetTrainer
 from .fewdet import FewdetTrainer
+from .fewdetv2 import FewdetTrainer as FewdetTrainerv2
 from .ddd import DddTrainer
 from .exdet import ExdetTrainer
 from .multi_pose import MultiPoseTrainer
@@ -13,5 +14,6 @@ train_factory = {
   'ddd': DddTrainer,
   'ctdet': CtdetTrainer,
   'fewdet': FewdetTrainer,
+  'fewdetv2': FewdetTrainerv2,
   'multi_pose': MultiPoseTrainer, 
 }
