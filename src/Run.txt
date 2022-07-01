@@ -2,7 +2,10 @@ python main.py ctdet --exp_id coco_dla --batch_size 4 --lr 1.25e-4  --gpus 0 --n
 python main.py fewdet --exp_id coco_dla --batch_size 4 --lr 1.25e-4  --gpus 0 --num_workers 0
 
 en DGX
-python main.py fewdet --exp_id coco_dlav2 --batch_size 32 --lr 1.25e-4  --gpus 0 --num_workers 3
+python main.py fewdet --exp_id coco_dla --batch_size 32 --lr 1.25e-4  --gpus 0 --num_workers 3
+
+para fewdetv2:
+python main.py fewdetv2 --exp_id coco_dlav2 --batch_size 64 --lr 1.25e-4  --gpus 0 --num_workers 3
 
 
 Namespace(K=100,
