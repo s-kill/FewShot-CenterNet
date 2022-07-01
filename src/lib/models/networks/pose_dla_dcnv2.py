@@ -482,7 +482,7 @@ class DLASeg(nn.Module):
                 self.cosclassifier = CosDist(head_conv, classes) #Init Cos Classifier for 'hm'
                 fc = nn.Sequential(
                     nn.Conv2d(channels[self.first_level], head_conv,
-                        kernel_size=3, padding=1, bias=True)
+                        kernel_size=3, padding=1, bias=True))
               else:
                 fc = nn.Sequential(
                     nn.Conv2d(channels[self.first_level], head_conv,
