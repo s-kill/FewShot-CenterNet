@@ -38,9 +38,10 @@ class CosDist(nn.Module):
             WeightNorm.apply(self.L, 'weight', dim=0) #split the weight update component to direction and norm 
         
         if outdim <=200:
-            self.scale_factor = 10; #a fixed scale factor to scale the output of cos value into a reasonably large input for softmax, for to reproduce the result of CUB with ResNet10, use 4. see the issue#31 in the github 
+            self.scale_factor = 2; #a fixed scale factor to scale the output of cos value into a reasonably large input for softmax, for to reproduce the result of CUB with ResNet10, use 4. see the issue#31 in the github 
         else:
             self.scale_factor = 10; #in omniglot, a larger scale factor is required to handle >1000 output classes.
+        self.softmax = nn.Softmax(dim=1)
     
     def forward(self,x):  #x = [batch x indim x 128 x 128]
         x_norm = torch.norm(x, p=2, dim =1).unsqueeze(1).expand_as(x)
@@ -54,7 +55,7 @@ class CosDist(nn.Module):
         #therefore L(x.T) = x.T@W [batch x 128 x 128 x outdim], we need [batch x outdim x 128 x 128] so another .T(3,1) is applied
         scores = self.scale_factor* (cos_dist) 
         
-        return scores
+        return self.softmax(scores)
 
 
 class BasicBlock(nn.Module):
