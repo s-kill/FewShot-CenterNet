@@ -32,31 +32,16 @@ def conv3x3(in_planes, out_planes, stride=1):
 class CosDist(nn.Module):
     def __init__(self, indim, outdim):
         super(CosDist, self).__init__()
-        self.L = nn.Linear(indim, outdim, bias = False) # create func y = x@W.T
-        self.class_wise_learnable_norm = True #See issue#4 in CloserLookFewShoot Github
-        if self.class_wise_learnable_norm:
-            WeightNorm.apply(self.L, 'weight', dim=0) #split the weight update component to direction and norm 
-        
-        if outdim <=200:
-            self.scale_factor = 2; #a fixed scale factor to scale the output of cos value into a reasonably large input for softmax, for to reproduce the result of CUB with ResNet10, use 4. see the issue#31 in the github 
-        else:
-            self.scale_factor = 10; #in omniglot, a larger scale factor is required to handle >1000 output classes.
+        self.W = nn.Parameter(torch.empty(indim,outdim)) #Empty W = [indim x outdim]
+        nn.init.kaiming_uniform_(self.W, a=math.sqrt(5)) #Tensor will have values sampled from U(-bound, bound)
+        self.temp = nn.Parameter(torch.tensor(10.))      #learnable scalar t
         self.softmax = nn.Softmax(dim=1)
-    
-    def forward(self,x):  #x = [batch x indim x 128 x 128]
-        x_norm = torch.norm(x, p=2, dim =1).unsqueeze(1).expand_as(x)
-        x_normalized = x.div(x_norm+ 0.00001)
 
-        if not self.class_wise_learnable_norm:
-            L_norm = torch.norm(self.L.weight.data, p=2, dim =1).unsqueeze(1).expand_as(self.L.weight.data)
-            self.L.weight.data = self.L.weight.data.div(L_norm + 0.00001)
-        #matrix product by forward function, but when using WeightNorm, this also multiply the cosine distance by a class-wise learnable norm, see the issue#4&8 in the github
-        cos_dist = self.L(x_normalized.transpose(1,3)).transpose(3,1) #x_normalized should be [batch x indim x 128 x 128], so x.T(1,3) = [batch x 128 x 128 x indim] 
-        #therefore L(x.T) = x.T@W [batch x 128 x 128 x outdim], we need [batch x outdim x 128 x 128] so another .T(3,1) is applied
-        #The linear transformation is then applied on the last dimension of the tensor.
-        scores = self.scale_factor* (cos_dist) 
-        
-        return self.softmax(scores)
+    def forward(self,x):  #x = [batch x indim x 128 x 128]
+        x_norm = F.normalize(x, dim=1) #x / max(||x||,e)
+        W_norm = F.normalize(self.W, dim=1) #W / max(||W||,e)
+        scores = x_norm.permute(0,3,2,1)@W_norm
+        return self.softmax(scores.permute(0,3,2,1))
 
 
 class BasicBlock(nn.Module):
@@ -491,10 +476,11 @@ class DLASeg(nn.Module):
                 fc[-1].bias.data.fill_(-2.19)
                 #cosine distance part
                 self.fc_ss = nn.Sequential(
-                    nn.Conv2d(channels[self.first_level], head_conv,
+                    nn.Conv2d(channels[self.first_level], head_conv*2,
                         kernel_size=3, padding=1, bias=True), #agrgar bn?
+                    nn.BatchNorm2d(head_conv*2,head_conv*2),
                     nn.ReLU(inplace=True), 
-                    CosDist(head_conv, classes))
+                    CosDist(head_conv*2, classes))
               else:
                 fc = nn.Sequential(
                     nn.Conv2d(channels[self.first_level], head_conv,
