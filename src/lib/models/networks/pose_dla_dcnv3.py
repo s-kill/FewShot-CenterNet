@@ -12,6 +12,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 import torch.utils.model_zoo as model_zoo
+from torch.nn.utils.weight_norm import WeightNorm #CosDisUtil
 
 from .DCNv2.dcn_v2 import DCN
 
@@ -26,6 +27,35 @@ def conv3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=1, bias=False)
+
+
+class CosDist(nn.Module):
+    def __init__(self, indim, outdim):
+        super(CosDist, self).__init__()
+        self.L = nn.Linear(indim, outdim, bias = False) # create func y = x@W.T
+        self.class_wise_learnable_norm = True #See issue#4 in CloserLookFewShoot Github
+        if self.class_wise_learnable_norm:
+            WeightNorm.apply(self.L, 'weight', dim=0) #split the weight update component to direction and norm 
+        
+        if outdim <=200:
+            self.scale_factor = 2; #a fixed scale factor to scale the output of cos value into a reasonably large input for softmax, for to reproduce the result of CUB with ResNet10, use 4. see the issue#31 in the github 
+        else:
+            self.scale_factor = 10; #in omniglot, a larger scale factor is required to handle >1000 output classes.
+        self.softmax = nn.Softmax(dim=1)
+    
+    def forward(self,x):  #x = [batch x indim x 128 x 128]
+        x_norm = torch.norm(x, p=2, dim =1).unsqueeze(1).expand_as(x)
+        x_normalized = x.div(x_norm+ 0.00001)
+
+        if not self.class_wise_learnable_norm:
+            L_norm = torch.norm(self.L.weight.data, p=2, dim =1).unsqueeze(1).expand_as(self.L.weight.data)
+            self.L.weight.data = self.L.weight.data.div(L_norm + 0.00001)
+        #matrix product by forward function, but when using WeightNorm, this also multiply the cosine distance by a class-wise learnable norm, see the issue#4&8 in the github
+        cos_dist = self.L(x_normalized.transpose(1,3)).transpose(3,1) #x_normalized should be [batch x indim x 128 x 128], so x.T(1,3) = [batch x 128 x 128 x indim] 
+        #therefore L(x.T) = x.T@W [batch x 128 x 128 x outdim], we need [batch x outdim x 128 x 128] so another .T(3,1) is applied
+        scores = self.scale_factor* (cos_dist) 
+        
+        return self.softmax(scores)
 
 
 class BasicBlock(nn.Module):
@@ -442,21 +472,39 @@ class DLASeg(nn.Module):
         self.ida_up = IDAUp(out_channel, channels[self.first_level:self.last_level], 
                             [2 ** i for i in range(self.last_level - self.first_level)])
         
+        
         self.heads = heads
+        #self.cosclassifier = CosDist(head_conv, classes) #Init Cos Classifier for 'hm'
+        
         for head in self.heads:
             classes = self.heads[head]
-            if head_conv > 0:
-              fc = nn.Sequential(
-                  nn.Conv2d(channels[self.first_level], head_conv,
-                    kernel_size=3, padding=1, bias=True),
-                  nn.ReLU(inplace=True),
-                  nn.Conv2d(head_conv, classes, 
-                    kernel_size=final_kernel, stride=1, 
-                    padding=final_kernel // 2, bias=True))
-              if 'hm' in head:
+            if head_conv > 0: #True for what we're doing (256)     
+              if 'hm' in head:     
+                fc = nn.Sequential(
+                    nn.Conv2d(channels[self.first_level], head_conv,
+                        kernel_size=3, padding=1, bias=True),
+                    nn.ReLU(inplace=True),
+                    nn.Conv2d(head_conv, 1, 
+                        kernel_size=final_kernel, stride=1, 
+                        padding=final_kernel // 2, bias=True))
                 fc[-1].bias.data.fill_(-2.19)
+                self.fc_ss = nn.Sequential(
+                    nn.Conv2d(channels[self.first_level], head_conv,
+                        kernel_size=3, padding=1, bias=True),
+                    nn.ReLU(inplace=True),
+                    CosDist(head_conv, classes))
               else:
+                fc = nn.Sequential(
+                    nn.Conv2d(channels[self.first_level], head_conv,
+                        kernel_size=3, padding=1, bias=True),
+                    nn.ReLU(inplace=True),
+                    nn.Conv2d(head_conv, classes, 
+                        kernel_size=final_kernel, stride=1, 
+                        padding=final_kernel // 2, bias=True))                
                 fill_fc_weights(fc)
+            
+            
+            
             else:
               fc = nn.Conv2d(channels[self.first_level], classes, 
                   kernel_size=final_kernel, stride=1, 
@@ -465,7 +513,9 @@ class DLASeg(nn.Module):
                 fc.bias.data.fill_(-2.19)
               else:
                 fill_fc_weights(fc)
+
             self.__setattr__(head, fc)
+
 
     def forward(self, x):
         x = self.base(x)
@@ -478,7 +528,12 @@ class DLASeg(nn.Module):
 
         z = {}
         for head in self.heads:
-            z[head] = self.__getattr__(head)(y[-1])
+            if 'hm' in head:
+                F_hm = self.__getattr__(head)(y[-1])
+                F_ss = self.fc_ss(y[-1])
+                z[head] = F_hm.mul(F_ss)
+            else:
+                z[head] = self.__getattr__(head)(y[-1])
         return [z]
     
 

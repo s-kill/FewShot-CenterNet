@@ -121,7 +121,7 @@ class BaseDetector(object):
       dec_time += decode_time - forward_time
       
       if self.opt.debug >= 2:
-        self.debug(debugger, images, dets, output, scale)
+        self.debug(debugger, images, dets, output, scale) #output not modified here
       
       dets = self.post_process(dets, meta, scale)
       torch.cuda.synchronize()
