@@ -520,7 +520,6 @@ class DLASeg(nn.Module):
         self.ida_up(y, 0, len(y))
 
         z = {}
-        print("WORKING_net")
         for head in self.heads:
             if 'hm' in head:
                 F_hm = self.__getattr__(head)(y[-1])
