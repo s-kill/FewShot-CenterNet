@@ -25,8 +25,14 @@ para fewdetv5:
 python main.py ctdet --exp_id coco_dlav5 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav5_34
 python test.py ctdet --exp_id coco_dlav5 --keep_res --load_model ../exp/ctdet/coco_dlav5/model_last.pth --arch dlav5_34
 
+para fewdetv6:
+python main.py ctdetv2 --exp_id coco_dlav6 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav6_34
+python test.py ctdetv2 --exp_id coco_dlav6 --keep_res --load_model ../exp/ctdet/coco_dlav5/model_last.pth --arch dlav5_34
+
 
 demo:
 python demo.py ctdet --demo ../images/16004479832_a748d55f21_k.jpg --load_model ../exp/ctdet/coco_dlav3/model_last.pth --arch dlav3_34
 
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dlav4/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdet\coco_dlav4
+
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dlav5/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdet\coco_dlav5

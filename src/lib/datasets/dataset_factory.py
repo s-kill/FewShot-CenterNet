@@ -23,6 +23,7 @@ dataset_factory = {
 _sample_factory = {
   'exdet': EXDetDataset,
   'ctdet': CTDetDataset,
+  'ctdetv2': CTDetDataset,
   'fewdet' : FewDetDataset, #<-- this
   'fewdetv2' : CTDetDataset,
   'ddd': DddDataset,

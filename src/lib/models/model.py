@@ -14,6 +14,7 @@ from .networks.pose_dla_dcnv2 import get_pose_net as get_dla_dcnv2 #<-----------
 from .networks.pose_dla_dcnv3 import get_pose_net as get_dla_dcnv3
 from .networks.pose_dla_dcnv4 import get_pose_net as get_dla_dcnv4
 from .networks.pose_dla_dcnv5 import get_pose_net as get_dla_dcnv5
+from .networks.pose_dla_dcnv6 import get_pose_net as get_dla_dcnv6
 #from .networks.resnet_dcn import get_pose_net as get_pose_net_dcn
 #from .networks.large_hourglass import get_large_hourglass_net
 
@@ -25,6 +26,7 @@ _model_factory = {
   'dlav3': get_dla_dcnv3,
   'dlav4': get_dla_dcnv4,
   'dlav5': get_dla_dcnv5,
+  'dlav6': get_dla_dcnv6,
   #'resdcn': get_pose_net_dcn,
   #'hourglass': get_large_hourglass_net,
 }

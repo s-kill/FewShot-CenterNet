@@ -28,11 +28,11 @@ class CtdetLoss(torch.nn.Module):
   def forward(self, outputs, batch):
     opt = self.opt
     hm_loss, wh_loss, off_loss = 0, 0, 0
+    print("WORKING_DET")
     for s in range(opt.num_stacks):
       output = outputs[s]
-      if not opt.mse_loss:
-        output['hm'] = _sigmoid(output['hm']) #quitar
-
+      #if not opt.mse_loss:
+      #  output['hm'] = _sigmoid(output['hm']) #quitar
       if opt.eval_oracle_hm:
         output['hm'] = batch['hm']
       if opt.eval_oracle_wh:

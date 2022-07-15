@@ -19,6 +19,10 @@ from .DCNv2.dcn_v2 import DCN
 BN_MOMENTUM = 0.1
 logger = logging.getLogger(__name__)
 
+def _sigmoid(x):
+  y = torch.clamp(x.sigmoid_(), min=1e-4, max=1-1e-4)
+  return y
+
 def get_model_url(data='imagenet', name='dla34', hash='ba72cf86'):
     return join('http://dl.yf.io/dla/models', data, '{}-{}.pth'.format(name, hash))
 
@@ -34,7 +38,7 @@ class CosDist(nn.Module):
         super(CosDist, self).__init__()
         self.W = nn.Parameter(torch.empty(indim,outdim)) #Empty W = [indim x outdim]
         nn.init.kaiming_uniform_(self.W, a=math.sqrt(5)) #Tensor will have values sampled from U(-bound, bound)
-        self.temp = nn.Parameter(torch.tensor(float(outdim)))      #learnable scalar t
+        self.temp = nn.Parameter(torch.tensor(10.))      #learnable scalar t
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self,x):  #x = [batch x indim x 128 x 128]
@@ -460,6 +464,7 @@ class DLASeg(nn.Module):
         
         
         self.heads = heads
+        #self.softmax = nn.Softmax(dim=1)
         #self.cosclassifier = CosDist(head_conv, classes) #Init Cos Classifier for 'hm'
         
         for head in self.heads:
@@ -476,11 +481,11 @@ class DLASeg(nn.Module):
                 fc[-1].bias.data.fill_(-2.19)
                 #cosine distance part
                 self.fc_ss = nn.Sequential(
-                    nn.Conv2d(channels[self.first_level], head_conv*2,
+                    nn.Conv2d(channels[self.first_level], head_conv,
                         kernel_size=3, padding=1, bias=True), #agrgar bn?
-                    nn.BatchNorm2d(head_conv*2,head_conv*2),
+                    nn.BatchNorm2d(head_conv,head_conv),
                     nn.ReLU(inplace=True), 
-                    CosDist(head_conv*2, classes))
+                    CosDist(head_conv, classes))
               else:
                 fc = nn.Sequential(
                     nn.Conv2d(channels[self.first_level], head_conv,
@@ -515,10 +520,13 @@ class DLASeg(nn.Module):
         self.ida_up(y, 0, len(y))
 
         z = {}
+        print("WORKING_net")
         for head in self.heads:
             if 'hm' in head:
                 F_hm = self.__getattr__(head)(y[-1])
+                F_hm = _sigmoid(F_hm)   #agregar sigmoid
                 F_ss = self.fc_ss(y[-1])
+                z['objns'] = F_hm
                 z[head] = F_hm.mul(F_ss)
             else:
                 z[head] = self.__getattr__(head)(y[-1])

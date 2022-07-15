@@ -41,7 +41,7 @@ class CosDist(nn.Module):
         x_norm = F.normalize(x, dim=1) #x / max(||x||,e)
         W_norm = F.normalize(self.W, dim=1) #W / max(||W||,e)
         scores = x_norm.permute(0,3,2,1)@W_norm
-        return self.softmax(scores.permute(0,3,2,1))
+        return self.softmax(scores.permute(0,3,2,1)*self.temp)
 
 
 class BasicBlock(nn.Module):
@@ -521,7 +521,9 @@ class DLASeg(nn.Module):
         for head in self.heads:
             if 'hm' in head:
                 F_hm = self.__getattr__(head)(y[-1])
+                #agregar sigmoid
                 F_ss = self.fc_ss(y[-1])
+                #z['objns'] = F_hm
                 z[head] = F_hm.mul(F_ss)
             else:
                 z[head] = self.__getattr__(head)(y[-1])
