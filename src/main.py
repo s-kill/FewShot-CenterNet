@@ -19,7 +19,7 @@ from trains.train_factory import train_factory
 def main(opt):
   torch.manual_seed(opt.seed)
   torch.backends.cudnn.benchmark = not opt.not_cuda_benchmark and not opt.test
-  Dataset = get_dataset(opt.dataset, opt.task) #opt.dataset = 'coco', opt.task = 'ctdet' or 'fewdet'
+  Dataset = get_dataset(opt.dataset, opt.task) #opt.dataset = 'coco', opt.task = 'ctdet' or 'fewdet' or 'fewdetv3'
   #Dataset := {fewcoco, fewdet}
   opt = opts().update_dataset_info_and_set_heads(opt, Dataset)
   print(opt)

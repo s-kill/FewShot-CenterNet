@@ -6,6 +6,7 @@ from .sample.ddd import DddDataset
 from .sample.exdet import EXDetDataset
 from .sample.ctdet import CTDetDataset
 from .sample.fewdet import FewDetDataset
+from .sample.fewdetv3 import FewDetDataset as FewDetDatasetv3
 from .sample.multi_pose import MultiPoseDataset
 
 from .dataset.coco import COCO
@@ -24,8 +25,9 @@ _sample_factory = {
   'exdet': EXDetDataset,
   'ctdet': CTDetDataset,
   'ctdetv2': CTDetDataset,
-  'fewdet' : FewDetDataset, #<-- this
+  'fewdet' : FewDetDataset,
   'fewdetv2' : CTDetDataset,
+  'fewdetv3' : FewDetDatasetv3,
   'ddd': DddDataset,
   'multi_pose': MultiPoseDataset
 }
