@@ -19,7 +19,7 @@ class CtdetLoss(torch.nn.Module):
     super(CtdetLoss, self).__init__()
     self.crit = torch.nn.MSELoss() if opt.mse_loss else FocalLoss()
     #opt.reg_loss = l1
-    self.crit_reg = RegL1Loss() if opt.reg_loss == 'l1' else \ 
+    self.crit_reg = RegL1Loss() if opt.reg_loss == 'l1' else \
               RegLoss() if opt.reg_loss == 'sl1' else None
     self.crit_wh = torch.nn.L1Loss(reduction='sum') if opt.dense_wh else \
               NormRegL1Loss() if opt.norm_wh else \

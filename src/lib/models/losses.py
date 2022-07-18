@@ -148,6 +148,17 @@ class RegL1Loss(nn.Module): #This
     loss = loss / (mask.sum() + 1e-4)
     return loss
 
+class SSCELoss(nn.Module): #This
+  def __init__(self):
+    super(SSCELoss, self).__init__()
+  
+  def forward(self, output, mask, ind, target):
+    pred = _transpose_and_gather_feat(output, ind)
+    pred = pred[mask.bool()]
+    target = target[mask.bool()]
+    loss = F.cross_entropy(pred, target)
+    return loss
+
 class NormRegL1Loss(nn.Module):
   def __init__(self):
     super(NormRegL1Loss, self).__init__()

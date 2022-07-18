@@ -44,8 +44,8 @@ class CosDist(nn.Module):
     def forward(self,x):  #x = [batch x indim x 128 x 128]
         x_norm = F.normalize(x, dim=1) #x / max(||x||,e)
         W_norm = F.normalize(self.W, dim=1) #W / max(||W||,e)
-        scores = x_norm.permute(0,3,2,1)@W_norm
-        return self.softmax(scores.permute(0,3,2,1)*self.temp)
+        scores = x_norm.permute(0,2,3,1)@W_norm
+        return self.softmax(scores.permute(0,3,1,2)*self.temp)
 
 
 class BasicBlock(nn.Module):
@@ -465,38 +465,29 @@ class DLASeg(nn.Module):
         
         self.heads = heads
         #self.softmax = nn.Softmax(dim=1)
-        #self.cosclassifier = CosDist(head_conv, classes) #Init Cos Classifier for 'hm'
+        
         
         for head in self.heads:
             classes = self.heads[head]
-            if head_conv > 0: #True for what we're doing (256)     
-              if 'hm' in head:     
-                fc = nn.Sequential(
-                    nn.Conv2d(channels[self.first_level], head_conv,
+            if head_conv > 0:
+                if 'ss' in head:
+                    fc = nn.Sequential(
+                        nn.Conv2d(channels[self.first_level], head_conv, kernel_size=3, padding=1, bias=True),
+                        nn.BatchNorm2d(head_conv,head_conv),
+                        nn.ReLU(inplace=True))
+                    self.cosclassifier = CosDist(head_conv, classes) #Init Cos Classifier for 'ss'                
+                else:                        
+                    fc = nn.Sequential(
+                        nn.Conv2d(channels[self.first_level], head_conv,
                         kernel_size=3, padding=1, bias=True),
-                    nn.ReLU(inplace=True),
-                    nn.Conv2d(head_conv, 1, 
+                        nn.ReLU(inplace=True),
+                        nn.Conv2d(head_conv, classes, 
                         kernel_size=final_kernel, stride=1, 
                         padding=final_kernel // 2, bias=True))
-                fc[-1].bias.data.fill_(-2.19)
-                #cosine distance part
-                self.fc_ss = nn.Sequential(
-                    nn.Conv2d(channels[self.first_level], head_conv,
-                        kernel_size=3, padding=1, bias=True), #agrgar bn?
-                    nn.BatchNorm2d(head_conv,head_conv),
-                    nn.ReLU(inplace=True), 
-                    CosDist(head_conv, classes))
-              else:
-                fc = nn.Sequential(
-                    nn.Conv2d(channels[self.first_level], head_conv,
-                        kernel_size=3, padding=1, bias=True),
-                    nn.ReLU(inplace=True),
-                    nn.Conv2d(head_conv, classes, 
-                        kernel_size=final_kernel, stride=1, 
-                        padding=final_kernel // 2, bias=True))                
-                fill_fc_weights(fc)
-            
-            
+                    if 'hm' in head:
+                        fc[-1].bias.data.fill_(-2.19)
+                    else:
+                        fill_fc_weights(fc)
             
             else:
               fc = nn.Conv2d(channels[self.first_level], classes, 
@@ -506,7 +497,6 @@ class DLASeg(nn.Module):
                 fc.bias.data.fill_(-2.19)
               else:
                 fill_fc_weights(fc)
-
             self.__setattr__(head, fc)
 
 
@@ -521,12 +511,10 @@ class DLASeg(nn.Module):
 
         z = {}
         for head in self.heads:
-            if 'hm' in head:
-                F_hm = self.__getattr__(head)(y[-1])
-                F_hm = _sigmoid(F_hm)   #agregar sigmoid
-                F_ss = self.fc_ss(y[-1])
-                z['objns'] = F_hm
-                z[head] = F_hm.mul(F_ss)
+            if 'ss' in head:
+                fc_ss = self.__getattr__(head)(y[-1])
+                z['fc_ss'] = fc_ss #Save CosClass input to after training
+                z[head] = self.cosclassifier(fc_ss) #output with softmax on dim=1
             else:
                 z[head] = self.__getattr__(head)(y[-1])
         return [z]
