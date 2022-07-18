@@ -136,7 +136,7 @@ class RegLoss(nn.Module):
     loss = _reg_loss(pred, target, mask)
     return loss
 
-class RegL1Loss(nn.Module):
+class RegL1Loss(nn.Module): #This
   def __init__(self):
     super(RegL1Loss, self).__init__()
   
