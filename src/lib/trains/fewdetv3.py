@@ -32,6 +32,7 @@ class FewdetLoss(torch.nn.Module): #TODO ADD SS LOSS AND HM LOSS
     ss_loss, hm_loss, wh_loss, off_loss = 0, 0, 0, 0
     for s in range(opt.num_stacks):
       output = outputs[s]
+      output['hm'] = output['hm'].squeeze(1)
       if not opt.mse_loss:
         output['hm'] = _sigmoid(output['hm'])
 
