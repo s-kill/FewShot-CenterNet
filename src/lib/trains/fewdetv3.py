@@ -7,7 +7,7 @@ import numpy as np
 
 from models.losses import FocalLoss
 from models.losses import RegL1Loss, RegLoss, NormRegL1Loss, RegWeightedL1Loss, SSCELoss
-from models.decode import ctdet_decode
+from models.fewdecode import fewdet_decode
 from models.utils import _sigmoid
 from utils.debugger import Debugger
 from utils.post_process import ctdet_post_process
@@ -125,8 +125,8 @@ class FewdetTrainer(BaseTrainer): #TODO ADD SS LOSS AND HM LOSS
 
   def save_result(self, output, batch, results): #TODO MODIFICAR?
     reg = output['reg'] if self.opt.reg_offset else None
-    dets = ctdet_decode(
-      output['hm'], output['wh'], reg=reg,
+    dets = fewdet_decode(
+      output['ss'],output['hm'], output['wh'], reg=reg,
       cat_spec_wh=self.opt.cat_spec_wh, K=self.opt.K)
     dets = dets.detach().cpu().numpy().reshape(1, -1, dets.shape[2])
     dets_out = ctdet_post_process(

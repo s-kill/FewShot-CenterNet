@@ -13,7 +13,8 @@ try:
 except:
   print('NMS not imported! If you need it,'
         ' do \n cd $CenterNet_ROOT/src/lib/external \n make')
-from models.decode import ctdet_decode
+from models.decode import ctdet_decode #TODO CHANGE
+from models.fewdecode import fewdet_decode
 from models.utils import flip_tensor
 from utils.image import get_affine_transform
 from utils.post_process import ctdet_post_process
@@ -21,14 +22,16 @@ from utils.debugger import Debugger
 
 from .base_detector import BaseDetector
 
-class CtdetDetector(BaseDetector):
+class FewdetDetector(BaseDetector):
   def __init__(self, opt):
-    super(CtdetDetector, self).__init__(opt)
+    super(FewdetDetector, self).__init__(opt)
   
   def process(self, images, return_time=False): #TODO MODIFY
     with torch.no_grad():
       output = self.model(images)[-1]
-      hm = output['hm'].sigmoid_()
+      ss = output['ss']
+      hm = output['hm'].squeeze(1)
+      hm = hm.sigmoid_()
       wh = output['wh']
       reg = output['reg'] if self.opt.reg_offset else None
       if self.opt.flip_test:
@@ -37,7 +40,7 @@ class CtdetDetector(BaseDetector):
         reg = reg[0:1] if reg is not None else None
       torch.cuda.synchronize()
       forward_time = time.time()
-      dets = ctdet_decode(hm, wh, reg=reg, cat_spec_wh=self.opt.cat_spec_wh, K=self.opt.K)
+      dets = fewdet_decode(ss, hm, wh, reg=reg, cat_spec_wh=self.opt.cat_spec_wh, K=self.opt.K) #Change
       
     if return_time:
       return output, dets, forward_time

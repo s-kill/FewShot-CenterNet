@@ -6,16 +6,11 @@ python main.py fewdet --exp_id coco_dla --batch_size 32 --lr 1.25e-4  --gpus 0 -
 
 para fewdetv2:
 python main.py fewdetv2 --exp_id coco_dlav2 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav2_34
-
-para test:
 python test.py fewdetv2 --exp_id coco_dlav2 --keep_res --load_model ../exp/fewdetv2/coco_dlav2/model_best.pth --arch dlav2_34
 
 para fewdetv3:
-python main.py ctdet --exp_id coco_dlav3 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav3_34
-python test.py ctdet --exp_id coco_dlav3 --keep_res --load_model ../exp/ctdet/coco_dlav3/model_last.pth --arch dlav3_34
-
-para test:
-python test.py fewdetv2 --exp_id coco_dlav2 --keep_res --load_model ../exp/fewdetv2/coco_dlav2/model_best.pth --arch dlav2_34
+python main.py fewdetv3 --exp_id coco_dlav3 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav7_34
+python test.py fewdetv3 --exp_id coco_dlav8 --keep_res --load_model ../exp/fewdetv3/coco_dlav8/model_last.pth --arch dlav7_34
 
 para fewdetv4:
 python main.py ctdet --exp_id coco_dlav4 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav4_34
@@ -31,7 +26,7 @@ python test.py ctdetv2 --exp_id coco_dlav6 --keep_res --load_model ../exp/ctdetv
 
 para fewdetv7:
 python main.py fewdetv3 --exp_id coco_dlav7 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav7_34
-python test.py fewdetv3 --exp_id coco_dlav7 --keep_res --load_model ../exp/fewdetv3/coco_dlav7/model_last.pth --arch dlav7_34
+python test.py fewdetv3 --exp_id coco_dlav7 --keep_res --load_model ../exp/fewdetv3/coco_dlav8/model_last.pth --arch dlav7_34
 
 demo:
 python demo.py ctdet --demo ../images/16004479832_a748d55f21_k.jpg --load_model ../exp/ctdet/coco_dlav3/model_last.pth --arch dlav3_34
@@ -41,3 +36,5 @@ scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dl
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dlav5/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdet\coco_dlav5
 
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
+
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/fewdetv3/coco_dlav8/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\fewdetv3\coco_dlav8
