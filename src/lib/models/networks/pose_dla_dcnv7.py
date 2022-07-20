@@ -39,13 +39,13 @@ class CosDist(nn.Module):
         self.W = nn.Parameter(torch.empty(indim,outdim)) #Empty W = [indim x outdim]
         nn.init.kaiming_uniform_(self.W, a=math.sqrt(5)) #Tensor will have values sampled from U(-bound, bound)
         self.temp = nn.Parameter(torch.tensor(10.))      #learnable scalar t
-        self.softmax = nn.Softmax(dim=1)
+        #self.softmax = nn.Softmax(dim=1)
 
     def forward(self,x):  #x = [batch x indim x 128 x 128]
         x_norm = F.normalize(x, dim=1) #x / max(||x||,e)
         W_norm = F.normalize(self.W, dim=0) #W / max(||W||,e) #DIM=0? o DIM=1?
         scores = x_norm.permute(0,2,3,1)@W_norm
-        return self.softmax(scores.permute(0,3,1,2)*self.temp)
+        return (scores.permute(0,3,1,2)*self.temp)#self.softmax(scores.permute(0,3,1,2)*self.temp)
 
 
 class BasicBlock(nn.Module):
