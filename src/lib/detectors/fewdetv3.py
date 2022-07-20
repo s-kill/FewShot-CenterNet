@@ -29,7 +29,7 @@ class FewdetDetector(BaseDetector):
   def process(self, images, return_time=False): #TODO MODIFY
     with torch.no_grad():
       output = self.model(images)[-1]
-      ss = output['ss']
+      ss = output['ss'].softmax(dim=1)
       hm = output['hm'].squeeze(1)
       hm = hm.sigmoid_()
       wh = output['wh']

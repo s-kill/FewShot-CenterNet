@@ -36,9 +36,9 @@ def conv3x3(in_planes, out_planes, stride=1):
 class CosDist(nn.Module):
     def __init__(self, indim, outdim):
         super(CosDist, self).__init__()
-        self.W = nn.Parameter(torch.empty(indim,outdim)) #Empty W = [indim x outdim]
+        self.W = nn.Parameter(torch.empty(indim,outdim), requires_grad=True) #Empty W = [indim x outdim]
         nn.init.kaiming_uniform_(self.W, a=math.sqrt(5)) #Tensor will have values sampled from U(-bound, bound)
-        self.temp = nn.Parameter(torch.tensor(10.))      #learnable scalar t
+        self.temp = nn.Parameter(torch.tensor(10.), requires_grad=True)      #learnable scalar t
         #self.softmax = nn.Softmax(dim=1)
 
     def forward(self,x):  #x = [batch x indim x 128 x 128]
@@ -474,6 +474,9 @@ class DLASeg(nn.Module):
                     fc = nn.Sequential(
                         nn.Conv2d(channels[self.first_level], head_conv, kernel_size=3, padding=1, bias=True),
                         nn.BatchNorm2d(head_conv,head_conv),
+                        nn.Conv2d(head_conv, head_conv, 
+                        kernel_size=final_kernel, stride=1, 
+                        padding=final_kernel // 2, bias=True),
                         nn.ReLU(inplace=True))
                     self.cosclassifier = CosDist(head_conv, classes) #Init Cos Classifier for 'ss'                
                 else:                        
