@@ -159,7 +159,6 @@ class SSCELoss(nn.Module): #This
     target = target[mask.bool()]
     #loss = self.loss_fn(pred, target)
     loss = F.cross_entropy(pred, target, reduction='elementwise_mean')
-    loss = loss / (mask.sum() + 1e-4)
     return loss
 
 class NormRegL1Loss(nn.Module):
