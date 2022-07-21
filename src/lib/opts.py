@@ -155,6 +155,8 @@ class opts(object):
     # ctdet + fewnet
     self.parser.add_argument('--reg_loss', default='l1',
                              help='regression loss: sl1 | l1 | l2')
+    self.parser.add_argument('--ss_weight', type=float, default=1,
+                             help='loss weight for keypoint heatmaps.')
     self.parser.add_argument('--hm_weight', type=float, default=1,
                              help='loss weight for keypoint heatmaps.')
     self.parser.add_argument('--off_weight', type=float, default=1,

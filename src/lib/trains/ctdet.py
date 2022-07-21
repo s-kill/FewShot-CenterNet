@@ -18,7 +18,6 @@ class CtdetLoss(torch.nn.Module):
   def __init__(self, opt):
     super(CtdetLoss, self).__init__()
     self.crit = torch.nn.MSELoss() if opt.mse_loss else FocalLoss()
-    #opt.reg_loss = l1
     self.crit_reg = RegL1Loss() if opt.reg_loss == 'l1' else \
               RegLoss() if opt.reg_loss == 'sl1' else None
     self.crit_wh = torch.nn.L1Loss(reduction='sum') if opt.dense_wh else \
@@ -32,7 +31,7 @@ class CtdetLoss(torch.nn.Module):
     for s in range(opt.num_stacks):
       output = outputs[s]
       if not opt.mse_loss:
-        output['hm'] = _sigmoid(output['hm']) #quitar
+        output['hm'] = _sigmoid(output['hm'])
 
       if opt.eval_oracle_hm:
         output['hm'] = batch['hm']
@@ -59,7 +58,7 @@ class CtdetLoss(torch.nn.Module):
           wh_loss += self.crit_wh(
             output['wh'], batch['cat_spec_mask'],
             batch['ind'], batch['cat_spec_wh']) / opt.num_stacks
-        else: #this
+        else:
           wh_loss += self.crit_reg(
             output['wh'], batch['reg_mask'],
             batch['ind'], batch['wh']) / opt.num_stacks

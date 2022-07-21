@@ -158,6 +158,7 @@ class SSCELoss(nn.Module): #This
     pred = pred[mask.bool()]
     target = target[mask.bool()]
     loss = self.loss(pred, target)
+    loss = loss / (mask.sum() + 1e-4)
     return loss
 
 class NormRegL1Loss(nn.Module):

@@ -71,7 +71,7 @@ class FewdetLoss(torch.nn.Module): #TODO ADD SS LOSS AND HM LOSS
         off_loss += self.crit_reg(output['reg'], batch['reg_mask'],
                              batch['ind'], batch['reg']) / opt.num_stacks
         
-    loss = ss_loss + opt.hm_weight * hm_loss + opt.wh_weight * wh_loss + \
+    loss = opt.ss_weight * ss_loss + opt.hm_weight * hm_loss + opt.wh_weight * wh_loss + \
            opt.off_weight * off_loss
     loss_stats = {'loss': loss, 'ss_loss': ss_loss, 'hm_loss': hm_loss,
                   'wh_loss': wh_loss, 'off_loss': off_loss}
