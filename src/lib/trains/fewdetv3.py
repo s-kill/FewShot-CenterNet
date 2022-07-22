@@ -6,7 +6,7 @@ import torch
 import numpy as np
 
 from models.losses import FocalLoss
-from models.losses import RegL1Loss, RegLoss, NormRegL1Loss, RegWeightedL1Loss, SSCELoss
+from models.losses import RegL1Loss, RegLoss, NormRegL1Loss, RegWeightedL1Loss, SSCELoss, QualityFocalLoss
 from models.fewdecode import fewdet_decode
 from models.utils import _sigmoid
 from utils.debugger import Debugger
@@ -25,6 +25,7 @@ class FewdetLoss(torch.nn.Module): #TODO ADD SS LOSS AND HM LOSS
               NormRegL1Loss() if opt.norm_wh else \
               RegWeightedL1Loss() if opt.cat_spec_wh else self.crit_reg
     self.crit_ss = SSCELoss()
+    self.crit_QFl = QualityFocalLoss('mean')
     self.opt = opt
 
   def forward(self, outputs, batch):
@@ -33,8 +34,8 @@ class FewdetLoss(torch.nn.Module): #TODO ADD SS LOSS AND HM LOSS
     for s in range(opt.num_stacks):
       output = outputs[s]
       output['hm'] = output['hm'].squeeze(1)
-      if not opt.mse_loss:
-        output['hm'] = _sigmoid(output['hm'])
+      #if not opt.mse_loss:
+        #output['hm'] = _sigmoid(output['hm'])
 
       if opt.eval_oracle_hm:
         output['hm'] = batch['hm']
@@ -50,7 +51,8 @@ class FewdetLoss(torch.nn.Module): #TODO ADD SS LOSS AND HM LOSS
           output['reg'].shape[3], output['reg'].shape[2])).to(opt.device)
 
       ss_loss += self.crit_ss(output['ss'], batch['reg_mask'], batch['ind'], batch['ss'])
-      hm_loss += self.crit(output['hm'], batch['hm']) / opt.num_stacks
+      #hm_loss += self.crit(output['hm'], batch['hm']) / opt.num_stacks
+      hm_loss += self.crit_QFl(output['hm'], batch['hm']) / opt.num_stacks
       if opt.wh_weight > 0:
         if opt.dense_wh:
           mask_weight = batch['dense_wh_mask'].sum() + 1e-4

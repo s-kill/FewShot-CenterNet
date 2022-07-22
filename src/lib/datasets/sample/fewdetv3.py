@@ -85,6 +85,7 @@ class FewDetDataset(data.Dataset):
 
     ss = np.zeros((self.max_objs), dtype=np.int64)
     hm = np.zeros((output_h, output_w), dtype=np.float32) #modified
+    #hm_og = np.zeros((num_classes, output_h, output_w), dtype=np.float32) #Testing
     wh = np.zeros((self.max_objs, 2), dtype=np.float32)
     dense_wh = np.zeros((2, output_h, output_w), dtype=np.float32)
     reg = np.zeros((self.max_objs, 2), dtype=np.float32)
@@ -116,6 +117,7 @@ class FewDetDataset(data.Dataset):
           [(bbox[0] + bbox[2]) / 2, (bbox[1] + bbox[3]) / 2], dtype=np.float32)
         ct_int = ct.astype(np.int32)
         draw_gaussian(hm, ct_int, radius) #modified
+        #draw_gaussian(hm_og[cls_id], ct_int, radius) #Testing
         ss[k] = cls_id #modified
         wh[k] = 1. * w, 1. * h
         ind[k] = ct_int[1] * output_w + ct_int[0]
@@ -128,7 +130,7 @@ class FewDetDataset(data.Dataset):
         gt_det.append([ct[0] - w / 2, ct[1] - h / 2, 
                        ct[0] + w / 2, ct[1] + h / 2, 1, cls_id])
     
-    ret = {'input': inp,'ss': ss, 'hm': hm, 'reg_mask': reg_mask, 'ind': ind, 'wh': wh}
+    ret = {'input': inp,'ss': ss, 'hm': hm, 'reg_mask': reg_mask, 'ind': ind, 'wh': wh}#, 'hm_og': hm_og}
     if self.opt.dense_wh:
       hm_a = hm.max(axis=0, keepdims=True)
       dense_wh_mask = np.concatenate([hm_a, hm_a], axis=0)

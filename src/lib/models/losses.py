@@ -155,10 +155,46 @@ class SSCELoss(nn.Module): #This
   
   def forward(self, output, mask, ind, target):
     pred = _transpose_and_gather_feat(output, ind)
+    """
     pred = pred[mask.bool()]
     target = target[mask.bool()]
     #loss = self.loss_fn(pred, target)
     loss = F.cross_entropy(pred, target, reduction='elementwise_mean')
+    """
+    mask = mask.unsqueeze(2).expand_as(pred).float()
+    pred_ss_masked = pred * mask
+    loss = F.cross_entropy(pred_ss_masked.permute(0,2,1), target)
+    return loss
+
+class QualityFocalLoss(nn.Module):
+  '''Quality Focal Loss. Use logits to improve numerical stability. Generalized Focal Loss: https://arxiv.org/abs/2006.04388
+  '''
+  def __init__(self, beta: float = 2, reduction: str = 'mean'):
+
+    '''Quality Focal Loss. Default values are from the paper
+    Args:
+        beta: control the scaling/modulating factor to reduce the impact of easy examples
+        reduction: either none, sum, or mean 
+    '''
+    super().__init__()
+    assert reduction in ('none', 'sum', 'mean')
+    self.beta = beta
+    self.reduction = reduction
+
+  def forward(self, inputs: torch.Tensor, targets: torch.Tensor):
+    probs = torch.sigmoid(inputs)
+
+    ce_loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
+    modulating_factor = torch.pow(torch.abs(targets - probs), 2)
+    
+    loss = modulating_factor * ce_loss
+    if self.reduction == 'none':
+        return loss
+
+    loss = torch.sum(loss)
+    if self.reduction == 'mean':
+        loss = loss / targets.eq(1).float().sum()
+
     return loss
 
 class NormRegL1Loss(nn.Module):
