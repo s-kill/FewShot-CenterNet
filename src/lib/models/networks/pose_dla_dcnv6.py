@@ -43,9 +43,9 @@ class CosDist(nn.Module):
 
     def forward(self,x):  #x = [batch x indim x 128 x 128]
         x_norm = F.normalize(x, dim=1) #x / max(||x||,e)
-        W_norm = F.normalize(self.W, dim=1) #W / max(||W||,e)
-        scores = x_norm.permute(0,3,2,1)@W_norm
-        return self.softmax(scores.permute(0,3,2,1)*self.temp)
+        W_norm = F.normalize(self.W, dim=0) #W / max(||W||,e)
+        scores = x_norm.permute(0,2,3,1)@W_norm
+        return self.softmax(scores.permute(0,3,1,2)*self.temp)
 
 
 class BasicBlock(nn.Module):
