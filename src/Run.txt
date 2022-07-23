@@ -20,15 +20,21 @@ para fewdetv5:
 python main.py ctdet --exp_id coco_dlav5 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav5_34
 python test.py ctdet --exp_id coco_dlav5 --keep_res --load_model ../exp/ctdet/coco_dlav5/model_last.pth --arch dlav5_34
 
-para fewdetv6:
+para fewdetv6: Multiplicacion de hm_objs*ss para entrenar tal cual CenterNet Original
 python main.py ctdetv2 --exp_id coco_dlav6 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav6_34
 python test.py ctdetv2 --exp_id coco_dlav6 --keep_res --load_model ../exp/ctdetv2/coco_dlav6/model_last.pth --arch dlav6_34
 
-para fewdetv7:
+para fewdetv7: Separación de hm y ss para entrenar por separado
 python main.py fewdetv3 --exp_id coco_dlav7 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav7_34
 python test.py fewdetv3 --exp_id coco_dlav7 --keep_res --load_model ../exp/fewdetv3/coco_dlav8/model_last.pth --arch dlav7_34
 
 python test.py fewdetv3 --exp_id coco_dlav9 --keep_res --load_model ../exp/fewdetv3/coco_dlav9/model_last.pth --arch dlav7_34
+
+para fewdetv8: Multiplicacion de hm_objs*ss para entrenar tal cual CenterNet Original, pero sumando el loss de objn
+python main.py ctdetv3 --exp_id coco_dla --batch_size 36 --lr 5e-4 --num_workers 3 --arch dlav6_34
+python test.py ctdetv3 --exp_id coco_dla --keep_res --load_model ../exp/ctdetv3/coco_dla/model_last.pth --arch dlav6_34
+
+
 
 demo:
 python demo.py ctdet --demo ../images/16004479832_a748d55f21_k.jpg --load_model ../exp/ctdet/coco_dlav3/model_last.pth --arch dlav3_34

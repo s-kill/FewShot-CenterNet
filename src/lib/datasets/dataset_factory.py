@@ -5,6 +5,7 @@ from __future__ import print_function
 from .sample.ddd import DddDataset
 from .sample.exdet import EXDetDataset
 from .sample.ctdet import CTDetDataset
+from .sample.ctdetv3 import CTDetDataset as CTDetDatasetv3
 from .sample.fewdet import FewDetDataset
 from .sample.fewdetv3 import FewDetDataset as FewDetDatasetv3
 from .sample.multi_pose import MultiPoseDataset
@@ -25,6 +26,7 @@ _sample_factory = {
   'exdet': EXDetDataset,
   'ctdet': CTDetDataset,
   'ctdetv2': CTDetDataset,
+  'ctdetv3': CTDetDatasetv3,
   'fewdet' : FewDetDataset,
   'fewdetv2' : CTDetDataset,
   'fewdetv3' : FewDetDatasetv3,

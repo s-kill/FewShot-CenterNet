@@ -118,6 +118,9 @@ class FocalLoss(nn.Module):
     self.neg_loss = _neg_loss
 
   def forward(self, out, target):
+    if out.shape[1] == 1:
+      out = out.squeeze(1)
+
     return self.neg_loss(out, target)
 
 class RegLoss(nn.Module):
