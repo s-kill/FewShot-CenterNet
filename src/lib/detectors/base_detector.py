@@ -114,6 +114,7 @@ class BaseDetector(object):
       pre_time += pre_process_time - scale_start_time
       
       output, dets, forward_time = self.process(images, return_time=True)
+      dets_copy = dets.clone()
 
       torch.cuda.synchronize()
       net_time += forward_time - pre_process_time
@@ -141,4 +142,4 @@ class BaseDetector(object):
     
     return {'results': results, 'tot': tot_time, 'load': load_time,
             'pre': pre_time, 'net': net_time, 'dec': dec_time,
-            'post': post_time, 'merge': merge_time}
+            'post': post_time, 'merge': merge_time, 'output': output, 'dets': dets_copy}

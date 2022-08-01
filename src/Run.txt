@@ -34,6 +34,7 @@ para fewdetv8: Multiplicacion de hm_objs*ss para entrenar tal cual CenterNet Ori
 python main.py ctdetv3 --exp_id coco_dla --batch_size 36 --lr 5e-4 --num_workers 3 --arch dlav6_34
 python test.py ctdetv3 --exp_id coco_dla --keep_res --load_model ../exp/ctdetv3/coco_dla/model_last.pth --arch dlav6_34
 
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv3/coco_dlav/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv3\coco_dla
 
 
 demo:
@@ -43,7 +44,7 @@ scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dl
 
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dlav5/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdet\coco_dlav5
 
-scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
+- scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
 
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/fewdetv3/coco_dlav8/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\fewdetv3\coco_dlav8
 
