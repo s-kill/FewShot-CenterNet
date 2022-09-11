@@ -34,8 +34,10 @@ class CtdetDetector(BaseDetector):
   def process(self, images, return_time=False):
     with torch.no_grad():
       self.model.fc_ss[0].register_forward_hook(get_activation('fc_ss'))
+      self.model.hm[0].register_forward_hook(get_activation('hm'))
       output = self.model(images)[-1]
       output['descriptor'] = activation['fc_ss']
+      output['descriptor2'] = activation['hm']
       hm = output['hm']
       wh = output['wh']
       reg = output['reg'] if self.opt.reg_offset else None

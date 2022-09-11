@@ -21,13 +21,21 @@ from utils.debugger import Debugger
 
 from .base_detector import BaseDetector
 
+activation = {}
+def get_activation(name):
+    def hook(model, input, output):
+        activation[name] = output.detach()
+    return hook
+
 class CtdetDetector(BaseDetector):
   def __init__(self, opt):
     super(CtdetDetector, self).__init__(opt)
   
   def process(self, images, return_time=False):
     with torch.no_grad():
+      self.model.hm[0].register_forward_hook(get_activation('hm'))
       output = self.model(images)[-1]
+      output['descriptor'] = activation['hm']
       hm = output['hm'].sigmoid_()
       wh = output['wh']
       reg = output['reg'] if self.opt.reg_offset else None
