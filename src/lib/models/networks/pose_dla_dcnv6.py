@@ -483,8 +483,6 @@ class DLASeg(nn.Module):
                 self.fc_ss = nn.Sequential(
                     nn.Conv2d(channels[self.first_level], head_conv,
                         kernel_size=3, padding=1, bias=True), #agrgar bn?
-                    nn.BatchNorm2d(head_conv,head_conv),
-                    nn.ReLU(inplace=True), 
                     CosDist(head_conv, classes))
               else:
                 fc = nn.Sequential(
