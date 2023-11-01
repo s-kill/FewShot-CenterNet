@@ -39,7 +39,7 @@ scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv3/coco_
 ---------------------------------------------------
 Sin RELU en la capa de fc_ss:
 
-python main.py ctdetv2 --exp_id coco_dlav6 --batch_size 48 --lr 5e-4 --num_workers 3 --arch dlav6_34
+python main.py ctdetv2 --exp_id coco_dlav6 --batch_size 36 --lr 5e-4 --num_workers 3 --arch dlav6_34
 python test.py ctdetv2 --exp_id coco_dlav6 --keep_res --load_model ../exp/ctdetv2/coco_dlav6/model_last.pth --arch dlav6_34
 
 demo:
