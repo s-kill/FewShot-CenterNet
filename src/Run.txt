@@ -34,7 +34,8 @@ para fewdetv8: Multiplicacion de hm_objs*ss para entrenar tal cual CenterNet Ori
 python main.py ctdetv3 --exp_id coco_dla --batch_size 36 --lr 5e-4 --num_workers 3 --arch dlav6_34
 python test.py ctdetv3 --exp_id coco_dla --keep_res --load_model ../exp/ctdetv3/coco_dla/model_last.pth --arch dlav6_34
 
-scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv3/coco_dlav/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv3\coco_dla
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_best.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
 
 ---------------------------------------------------
 Sin RELU en la capa de fc_ss:
@@ -54,3 +55,22 @@ scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdet/coco_dl
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/fewdetv3/coco_dlav8/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\fewdetv3\coco_dlav8
 
 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/fewdetv3/coco_dlav9/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\fewdetv3\coco_dlav9
+-------------------------
+cosas nuevas
+
+-relu inplace generaba ceros
+python main.py ctdetv2 --exp_id coco_dlav6 --batch_size 40 --lr 5e-4 --num_workers 3 --arch dlav6_34
+python test.py ctdetv2 --exp_id coco_dlav6 --keep_res --load_model ../exp/ctdetv2/coco_dlav6/model_last.pth --arch dlav6_34
+python test.py ctdetv2 --exp_id coco_dlav6 --keep_res --load_model ../exp/ctdetv2/coco_dlav6/model_best.pth --arch dlav6_34
+
+
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_best.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
+scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/model_last.pth C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6
+
+1-25: lr 5e-4
+25+: lr 1.25e-4
+
+1-25 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/logs_2023-11-01-04-03/log.txt C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6\logs_2023-11-01-04-03\
+25-140 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/logs_2023-11-02-18-35/log.txt C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6\logs_2023-11-02-18-35
+140-200 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/logs_2023-11-11-18-19/log.txt C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6\logs_2023-11-11-18-19
+200-240 scp -r matias.cornejo@172.17.53.16:~/cachefs/FewShot-CenterNet/exp/ctdetv2/coco_dlav6/logs_2023-11-16-08-13/log.txt C:\Users\avata\FewShot-CenterNet\exp\ctdetv2\coco_dlav6\logs_2023-11-16-08-13

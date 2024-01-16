@@ -42,7 +42,8 @@ class Debugger(object):
         (255, 0, 0), (0, 0, 255), (255, 0, 0), (0, 0, 255),
         (255, 0, 0), (0, 0, 255)]
     elif num_classes == 80 or dataset == 'coco':
-      self.names = coco_class_name
+      #self.names = coco_class_name
+      self.names = yolo_class_name
     elif num_classes == 20 or dataset == 'pascal':
       self.names = pascal_class_name
     elif dataset == 'gta':
@@ -454,6 +455,23 @@ coco_class_name = [
      'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave',
      'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase',
      'scissors', 'teddy bear', 'hair drier', 'toothbrush'
+]
+
+yolo_class_name = [
+      'aceite', 'aerosol', 'azucarero', 'balsamo', 'borrador',
+      'cafe', 'cera', 'cloro', 'cloroplano', 'coca', 'colador',
+      'confort', 'crema', 'cubix', 'desodorante', 'durazno',
+      'esponja', 'estuche', 'greda', 'guante', 'harina', 'jabon',
+      'jugoind', 'ketchup', 'lata', 'leche', 'limon', 'linterna',
+      'mantequilla', 'mostaza', 'papas', 'pelota', 'pepino', 'pescado',
+      'platano', 'platoperro', 'sarten', 'te', 'uslero', 'yogurt',
+      'aceite', 'aerosol', 'azucarero', 'balsamo', 'borrador',
+      'cafe', 'cera', 'cloro', 'cloroplano', 'coca', 'colador',
+      'confort', 'crema', 'cubix', 'desodorante', 'durazno',
+      'esponja', 'estuche', 'greda', 'guante', 'harina', 'jabon',
+      'jugoind', 'ketchup', 'lata', 'leche', 'limon', 'linterna',
+      'mantequilla', 'mostaza', 'papas', 'pelota', 'pepino', 'pescado',
+      'platano', 'platoperro', 'sarten', 'te', 'uslero', 'yogurt'
 ]
 
 color_list = np.array(
